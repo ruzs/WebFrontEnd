@@ -11,41 +11,83 @@
     * {
       transition-duration: 0.5s;
     }
+    body{
+      background: url(https://images.unsplash.com/photo-1578809606407-567084e461a6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1974&q=80) no-repeat center;
+      background-size: cover;
+      background-attachment: fixed;
+      position: relative;
+    }
+    .acb{
+      height: 1600px;
+      position: relative;
+    }
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #fff;
+      opacity: .2;
+    }
+    table{
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+    table::before{
+      opacity: .5;
+    }
+    th:first-child{
+      border-top-left-radius: 10px;
+    }
+    th:last-child{
+      border-top-right-radius: 10px;
+    }
+    tr:last-child td:last-child{
+      border-bottom-right-radius: 10px;
+    }
+    tr:last-child td:first-child{
+      border-bottom-left-radius: 10px;
+    }
   </style>
 </head>
 
 <body>
-  <nav class="navbar navbar-light bg-secondary bg-gradient rounded-bottom shadow-lg">
-    <div class="container-fluid">
-      <a class="navbar-brand fw-bold" href="#">
-        <img src="https://www.cwb.gov.tw/V8/assets/img/weather_icons/weathers/svg_icon/day/01.svg" alt="" width="30" height="24" class="d-inline-block align-text-top">
-        網頁動態技術
-      </a>
+  <div class="acb">
+
+    <nav class="navbar navbar-light bg-gradient rounded-bottom">
+      <div class="container-fluid">
+        <a class="navbar-brand fw-bold text-white" href="#">
+          <img src="https://www.cwb.gov.tw/V8/assets/img/weather_icons/weathers/svg_icon/day/01.svg" alt="" width="30" height="24" class="d-inline-block align-text-top">
+          網頁動態技術
+        </a>
+      </div>
+    </nav>
+    <div class="container mt-3 text-center">
+      <h1 class="fw-bold text-white">天氣預報</h1>
+      <hr>
+      <button class="btn btn-dark m-2 mx-3 fw-bold" onclick="show('all')">全部</button>
+      <button class="btn btn-primary m-2 fw-bold" onclick="show('北部')">北部</button>
+      <button class="btn btn-success m-2 fw-bold" onclick="show('中部')">中部</button>
+      <button class="btn btn-warning text-white m-2 fw-bold" onclick="show('南部')">南部</button>
+      <button class="btn btn-danger text-white m-2 fw-bold" onclick="show('東部')">東部</button>
+      <hr>
+      <h3 class="text-white fw-bold">區域</h3>
+      <select name="" id="sel" class="btn btn-dark dropdown-toggle">
+        <option value="all" class="dropdown-item">All</option>
+        <option value="北部" class="dropdown-item bg-primary">北部</option>
+        <option value="中部" class="dropdown-item bg-success">中部</option>
+        <option value="南部" class="dropdown-item bg-warning">南部</option>
+        <option value="東部" class="dropdown-item bg-danger">東部</option>
+        <option value="all" class="dropdown-item">------</option>
+      </select>
+      <hr>
+      <table id="table_id" class="table table-striped shadow-lg">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
     </div>
-  </nav>
-  <div class="container mt-3 text-center">
-    <h1 class="fw-bold text-primary">天氣預報</h1>
-    <hr>
-    <button class="btn btn-dark m-2 mx-3 fw-bold" onclick="show('all')">全部</button>
-    <button class="btn btn-primary m-2 fw-bold" onclick="show('北部')">北部</button>
-    <button class="btn btn-success m-2 fw-bold" onclick="show('中部')">中部</button>
-    <button class="btn btn-warning text-white m-2 fw-bold" onclick="show('南部')">南部</button>
-    <button class="btn btn-danger text-white m-2 fw-bold" onclick="show('東部')">東部</button>
-    <hr>
-    <h5>區域</h5>
-    <select name="" id="sel" class="btn btn-dark dropdown-toggle">
-      <option value="all" class="dropdown-item">All</option>
-      <option value="北部" class="dropdown-item bg-primary">北部</option>
-      <option value="中部" class="dropdown-item bg-success">中部</option>
-      <option value="南部" class="dropdown-item bg-warning">南部</option>
-      <option value="東部" class="dropdown-item bg-danger">東部</option>
-      <option value="all" class="dropdown-item">------</option>
-    </select>
-    <hr>
-    <table id="table_id" class="table table-striped">
-      <thead></thead>
-      <tbody></tbody>
-    </table>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
