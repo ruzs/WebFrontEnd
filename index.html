@@ -59,7 +59,7 @@
     <nav class="navbar navbar-light bg-gradient rounded-bottom">
       <div class="container-fluid">
         <a class="navbar-brand fw-bold text-white" href="#">
-          <img src="https://www.cwb.gov.tw/V8/assets/img/weather_icons/weathers/svg_icon/day/01.svg" alt="" width="30" height="24" class="d-inline-block align-text-top">
+          <img src="./img/day2.0/animated/cloudy-day-1.svg"" width="30" height="30" class="d-inline-block align-text-top">
           網頁動態技術
         </a>
       </div>
@@ -83,6 +83,7 @@
         <option value="all" class="dropdown-item">------</option>
       </select>
       <hr>
+      
       <table id="table_id" class="table table-striped shadow-lg">
         <thead></thead>
         <tbody></tbody>
@@ -103,7 +104,7 @@
       $("thead tr").remove();
       $("tbody tr").remove();
       $.ajax({
-        url: "https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWB-426CF436-48EC-48F1-AB77-A10809A02F03",
+        url: "https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWB-426CF436-48EC-48F1-AB77-A10809A02F03&format=JSON",
         type: "get",
         dataType: 'json',
         success: function (res) {
@@ -118,9 +119,9 @@
         <tr>
           <th class="table-light">No.</th>
           <th class="table-success text-success fw-bold">地點</th>
-          <th class="table-info text-primary time1">${timeText0}</th>
-          <th class="table-warning text-info time2">${timeText1}</th>
-          <th class="table-danger text-danger time3">${timeText2}</th>
+          <th class="table-info text-primary time1">${timeText0}<img src="./img/day2.0/animated/${time0.getHours()<15?'day':'night'}.svg" width="24px" height="24px"></th>
+          <th class="table-warning text-info time2">${timeText1}<img src="./img/day2.0/animated/${time1.getHours()<15?'day':'night'}.svg" width="24px" height="24px"></th>
+          <th class="table-danger text-danger time3">${timeText2}<img src="./img/day2.0/animated/${time2.getHours()<15?'day':'night'}.svg" width="24px" height="24px"></th>
         </tr>
       `;
           $("thead").append(js_title);
