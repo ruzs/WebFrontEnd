@@ -100,6 +100,8 @@
     integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
+    // 時間初始化
+    $('.navbar a.time').text(timeFormat(new Date().getHours())+':'+timeFormat(new Date().getMinutes())+':'+timeFormat(new Date().getSeconds()));
     // 每30分鐘reload一次
     setTimeout(() => {
       location.reload
