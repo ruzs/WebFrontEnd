@@ -31,6 +31,9 @@
       background: #fff;
       opacity: .2;
     }
+    .navbar .container-fluid a.time{
+      font-size: 30px;
+    }
     table{
       border-collapse: separate;
       border-spacing: 0;
@@ -50,6 +53,7 @@
     tr:last-child td:first-child{
       border-bottom-left-radius: 10px;
     }
+
   </style>
 </head>
 
@@ -62,6 +66,7 @@
           <img src="./img/day2.0/animated/cloudy-day-1.svg"" width="30" height="30" class="d-inline-block align-text-top">
           網頁動態技術
         </a>
+        <a class="navbar-brand fw-bold text-white time" href="#"></a>
       </div>
     </nav>
     <div class="container mt-3 text-center">
@@ -95,6 +100,12 @@
     integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
+    // 每30分鐘reload一次
+    setTimeout(() => {
+      location.reload
+    }, 30*60*1000);
+
+    // select選擇器更換選項
     $("select").change(() => {
       show($('select').val())
     });
@@ -228,7 +239,15 @@
           time = 0;
           break;
       }
+      $('.navbar a.time').text(timeFormat(new Date().getHours())+':'+timeFormat(new Date().getMinutes())+':'+timeFormat(new Date().getSeconds()));
     }, 1000);
+
+    function timeFormat(time) {
+      if(time<10){
+        time='0'+time;
+      }
+      return time
+    }
   </script>
   
 </body>
