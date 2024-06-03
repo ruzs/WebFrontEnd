@@ -5,7 +5,8 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+  <link href="./css/bootstrap5.2.3.min.css" rel="stylesheet">
   <title>網頁動態技術</title>
   <style>
     * {
@@ -33,6 +34,11 @@
     }
     .navbar .container-fluid a.time{
       font-size: 30px;
+    }
+    .location_title{
+      display: inline-block;
+      background-color: #fff;
+      border-radius: 10px;
     }
     table{
       border-collapse: separate;
@@ -91,18 +97,19 @@
         <option value="all" class="dropdown-item">------</option>
       </select>
       <hr>
-      
+      <h1 class="fw-bold text-warning"><div class="location_title p-1"></div></h1>
       <table id="table_id" class="table table-striped shadow-lg">
         <thead></thead>
         <tbody></tbody>
       </table>
     </div>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"
-    integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="./js/bootstrap-5.2.3.bundle.min.js"></script>
+  <script src="./js/jquery-3.7.1.min.js"></script>
+  <script src="./js/moment-with-locales-2.30.1.js"></script>
   <script>
+    moment.locale('zh-tw');
+    let local_weathers=[];
     // 時間初始化
     $('.navbar a.time').text(timeFormat(new Date().getHours())+':'+timeFormat(new Date().getMinutes())+':'+timeFormat(new Date().getSeconds()));
     // 每30分鐘reload一次
@@ -116,7 +123,6 @@
     });
     let i = 0;
     function show(local) {
-      // console.log("local",local);
       $("thead").empty();
       $("tbody").empty();
       $.ajax({
@@ -124,20 +130,19 @@
         type: "get",
         dataType: 'json',
         success: function (res) {
+          console.log('res',res);
+          $('h1 .location_title').text('台灣'+res.records.datasetDescription);
           let data = res.records.location;
-          const time0 = new Date(data[0].weatherElement[2].time[0].startTime);
-          const time1 = new Date(data[0].weatherElement[2].time[1].startTime);
-          const time2 = new Date(data[0].weatherElement[2].time[2].startTime);
-          const timeText0 = `${time0.getFullYear()} / ${time0.getMonth() + 1} / ${time0.getDate()} / ${time0.getHours()}:00`;
-          const timeText1 = `${time1.getFullYear()} / ${time1.getMonth() + 1} / ${time1.getDate()} / ${time1.getHours()}:00`;
-          const timeText2 = `${time2.getFullYear()} / ${time2.getMonth() + 1} / ${time2.getDate()} / ${time2.getHours()}:00`;
+          let time0 = new Date(data[0].weatherElement[2].time[0].startTime);
+          let time1 = new Date(data[0].weatherElement[2].time[1].startTime);
+          let time2 = new Date(data[0].weatherElement[2].time[2].startTime);
           let js_title = `
             <tr>
               <th class="table-light">No.</th>
               <th class="table-success text-success fw-bold">地點</th>
-              <th class="table-info text-primary time1">${timeText0}<img src="./img/day2.0/animated/${time0.getHours()<15?'day':'night'}.svg" width="24px" height="24px"></th>
-              <th class="table-warning text-info time2">${timeText1}<img src="./img/day2.0/animated/${time1.getHours()<15?'day':'night'}.svg" width="24px" height="24px"></th>
-              <th class="table-danger text-danger time3">${timeText2}<img src="./img/day2.0/animated/${time2.getHours()<15?'day':'night'}.svg" width="24px" height="24px"></th>
+              <th class="table-info text-primary time1">${moment(time0).format('YYYY/MM/DD HH:mm')}<img src="./img/day2.0/animated/${time0.getHours()<15?'day':'night'}.svg" width="48px" height="48px"></th>
+              <th class="table-warning text-info time2">${moment(time1).format('YYYY/MM/DD HH:mm')}<img src="./img/day2.0/animated/${time1.getHours()<15?'day':'night'}.svg" width="48px" height="48px"></th>
+              <th class="table-danger text-danger time3">${moment(time2).format('YYYY/MM/DD HH:mm')}<img src="./img/day2.0/animated/${time2.getHours()<15?'day':'night'}.svg" width="48px" height="48px"></th>
             </tr>
           `;
           $("thead").append(js_title);
@@ -148,12 +153,9 @@
               $("select").eq(0).append(opt);
             });
           }
-          let cc=``;
           $.each(res.records.location, function (key, value) {
-            // let opt = `<option value="${value.locationName}" class="dropdown-item local">${value.locationName}</option>`;
-            // $("select").eq(0).append(opt);
             let js_html = `
-              <tr>
+              <tr class="location">
                 <td class="table-light text-black-50">${key + 1}</td>
                 <td class="table-success text-success fw-bold">${value.locationName}</td>
                 <td class="table-info text-primary time1">${value.weatherElement[2].time[0].parameter.parameterName}~${value.weatherElement[4].time[0].parameter.parameterName} &deg;${value.weatherElement[4].time[0].parameter.parameterUnit} | ${value.weatherElement[1].time[0].parameter.parameterName}% | <img src="./img/day/${value.weatherElement[0].time[0].parameter.parameterValue}.svg" title="${value.weatherElement[0].time[0].parameter.parameterName}" alt="" width="40px"> <span class="fw-bold">${value.weatherElement[3].time[0].parameter.parameterName}</span></td>
@@ -164,6 +166,7 @@
             switch (local) {
               case "all":
                 $("tbody").append(js_html);
+                $('h1 .location_title').text('台灣'+res.records.datasetDescription);
                 break;
               case "北部":
                 if (
@@ -175,6 +178,7 @@
                   value.locationName.includes("苗栗")
                 ) {
                   $("tbody").append(js_html);
+                  $('h1 .location_title').text('台灣北部'+res.records.datasetDescription);
                 }
                 break;
               case "中部":
@@ -186,6 +190,7 @@
                   value.locationName.includes("南投")
                 ) {
                   $("tbody").append(js_html);
+                  $('h1 .location_title').text('台灣中部'+res.records.datasetDescription);
                 }
                 break;
               case "南部":
@@ -195,6 +200,7 @@
                   value.locationName.includes("屏東")
                 ) {
                   $("tbody").append(js_html);
+                  $('h1 .location_title').text('台灣南部'+res.records.datasetDescription);
                 }
                 break;
               case "東部":
@@ -204,6 +210,7 @@
                   value.locationName.includes("臺東")
                 ) {
                   $("tbody").append(js_html);
+                  $('h1 .location_title').text('台灣東部'+res.records.datasetDescription);
                 }
                 break;
               default:
@@ -254,8 +261,8 @@
       }
       return time
     }
-    $(document).on('click','tr',function () {
-      if ($(this).find('td') && !$(this).hasClass('district')) {
+    $(document).on('click','tbody tr',function () {
+      if ($(this).find('td') && $(this).hasClass('location')) {
         $("thead").empty();
         $("tbody").empty();
         let city_no=``;
@@ -270,24 +277,29 @@
           type: "get",
           dataType: 'json',
           success: function (res) {
-            let js_title = `
-              <tr class="district">
-                <th class="table-light">No.</th>
-                <th class="table-success text-success fw-bold">地點</th>
-                <th class="table-info text-primary time1">${res.records.locations[0].location[0].weatherElement[0].time[0].startTime}<img src="./img/day2.0/animated/${new Date(res.records.locations[0].location[0].weatherElement[0].time[0].startTime).getHours()<15?'day':'night'}.svg" width="24px" height="24px"></th>
-                <th class="table-warning text-info time2">${res.records.locations[0].location[0].weatherElement[0].time[1].startTime}<img src="./img/day2.0/animated/${new Date(res.records.locations[0].location[0].weatherElement[0].time[1].startTime).getHours()<15?'day':'night'}.svg" width="24px" height="24px"></th>
-                <th class="table-danger text-danger time3">${res.records.locations[0].location[0].weatherElement[0].time[2].startTime}<img src="./img/day2.0/animated/${new Date(res.records.locations[0].location[0].weatherElement[0].time[2].startTime).getHours()<15?'day':'night'}.svg" width="24px" height="24px"></th>
-              </tr>
-            `;
+          console.log('$res', res);
+          local_weathers = res.records.locations[0].location;
+          $('h1 .location_title').text(res.records.locations[0].locationsName);
+          let js_title = `
+            <tr class="district">
+              <th class="table-light">No.</th>
+              <th class="table-success text-success fw-bold">地點</th>
+              <th class="table-info text-primary time1">${moment(res.records.locations[0].location[0].weatherElement[0].time[0].startTime).format('YYYY/MM/DD HH:mm')}<img src="./img/day2.0/animated/${new Date(res.records.locations[0].location[0].weatherElement[0].time[0].startTime).getHours()<15?'day':'night'}.svg" width="48px" height="48px"></th>
+              <th class="table-warning text-info time2">${moment(res.records.locations[0].location[0].weatherElement[0].time[1].startTime).format('YYYY/MM/DD HH:mm')}<img src="./img/day2.0/animated/${new Date(res.records.locations[0].location[0].weatherElement[0].time[1].startTime).getHours()<15?'day':'night'}.svg" width="48px" height="48px"></th>
+              <th class="table-danger text-danger time3">${moment(res.records.locations[0].location[0].weatherElement[0].time[2].startTime).format('YYYY/MM/DD HH:mm')}<img src="./img/day2.0/animated/${new Date(res.records.locations[0].location[0].weatherElement[0].time[2].startTime).getHours()<15?'day':'night'}.svg" width="48px" height="48px"></th>
+              <th class="table-success time4">${moment(res.records.locations[0].location[0].weatherElement[0].time[3].startTime).format('YYYY/MM/DD HH:mm')}<img src="./img/day2.0/animated/${new Date(res.records.locations[0].location[0].weatherElement[0].time[3].startTime).getHours()<15?'day':'night'}.svg" width="48px" height="48px"></th>
+            </tr>
+          `;
           $("thead").append(js_title);
             $.each(res.records.locations[0].location,function (key,district) {
               let js_html = `
                 <tr class="district">
-                  <td class="table-light text-black-50">${key + 1}</td>
-                  <td class="table-success text-success fw-bold">${district.locationName}</td>
-                  <td class="table-info text-primary time1">${district.weatherElement[0].time[0].elementValue[0].value}</span></td>
-                  <td class="table-warning text-info time2">${district.weatherElement[0].time[1].elementValue[0].value}</span></td>
-                  <td class="table-danger text-danger time3">${district.weatherElement[0].time[2].elementValue[0].value}}</span></td>
+                  <td class="table-light text-black-50 align-middle">${key + 1}</td>
+                  <td class="table-success text-success fw-bold align-middle">${district.locationName}</td>
+                  <td class="table-info text-primary time1">目前天氣: ${district.weatherElement[0].time[0].elementValue[0].value.split('。')[0]}<br>${district.weatherElement[0].time[0].elementValue[0].value.split('。')[1]}<br>${district.weatherElement[0].time[0].elementValue[0].value.split('。')[2]}</td>
+                  <td class="table-warning text-info time2">目前天氣: ${district.weatherElement[0].time[1].elementValue[0].value.split('。')[0]}<br>${district.weatherElement[0].time[1].elementValue[0].value.split('。')[1]}<br>${district.weatherElement[0].time[1].elementValue[0].value.split('。')[2]}</td>
+                  <td class="table-danger text-danger time3">目前天氣: ${district.weatherElement[0].time[2].elementValue[0].value.split('。')[0]}<br>${district.weatherElement[0].time[2].elementValue[0].value.split('。')[1]}<br>${district.weatherElement[0].time[2].elementValue[0].value.split('。')[2]}</td>
+                  <td class="table-success time4">目前天氣: ${district.weatherElement[0].time[3].elementValue[0].value.split('。')[0]}<br>${district.weatherElement[0].time[3].elementValue[0].value.split('。')[1]}<br>${district.weatherElement[0].time[2].elementValue[0].value.split('。')[2]}</td>
                 </tr>
               `;
               $("tbody").append(js_html);
@@ -295,6 +307,31 @@
           },
           error: function (jqXHR, textStatus, errorThrown) {}
         });
+      }else if($(this).find('td') && $(this).hasClass('district')){
+        $("thead").empty();
+        $("tbody").empty();
+        $("thead").append('<tr class="district_local"></tr>');
+        
+        $('h1 .location_title').text(local_weathers[$(this).find('td').eq(0).text()-1].locationName);
+        $("thead .district_local").append(`<th class="table-info text-primary time1">${moment(local_weathers[$(this).find('td').eq(0).text()-1].weatherElement[0].time[0].startTime).format('h:mm a')}</th>`);
+        $("thead .district_local").append(`<th class="table-warning text-info time2">${moment(local_weathers[$(this).find('td').eq(0).text()-1].weatherElement[0].time[1].startTime).format('h:mm a')}</th>`);
+        $("thead .district_local").append(`<th class="table-danger text-danger time3">${moment(local_weathers[$(this).find('td').eq(0).text()-1].weatherElement[0].time[2].startTime).format('h:mm a')}</th>`);
+        $("thead .district_local").append(`<th class="table-success text-success time4">${moment(local_weathers[$(this).find('td').eq(0).text()-1].weatherElement[0].time[3].startTime).format('h:mm a')}</th>`);
+        $.each(local_weathers[$(this).find('td').eq(0).text()-1].weatherElement[0].time, function (key,weather) {
+          console.log('weather'+key,weather);
+          if(key%4==0){$("tbody").append('<tr class="district_local"></tr><tr class="district_local"></tr>');}
+          for (let x = 0; x < 2; x++) {
+            if(key%4==0){
+              $("tbody .district_local").eq(x==0?-2:-1).append(`<td class="table-info text-primary time1">${x==0?moment(weather.startTime).format('YYYY/MM/DD HH:mm')+`<img src="./img/day2.0/animated/${(moment(weather.startTime).format('H'))<15?'day':'night'}.svg" width="48px" height="48px">`:weather.elementValue[0].value}</td>`);
+            }else if(key%4==1){
+              $("tbody .district_local").eq(x==0?-2:-1).append(`<td class="table-warning text-info time2">${x==0?moment(weather.startTime).format('YYYY/MM/DD HH:mm')+`<img src="./img/day2.0/animated/${(moment(weather.startTime).format('H'))<15?'day':'night'}.svg" width="48px" height="48px">`:weather.elementValue[0].value}</td>`);
+            }else if(key%4==2){
+              $("tbody .district_local").eq(x==0?-2:-1).append(`<td class="table-danger text-danger time3">${x==0?moment(weather.startTime).format('YYYY/MM/DD HH:mm')+`<img src="./img/day2.0/animated/${(moment(weather.startTime).format('H'))<15?'day':'night'}.svg" width="48px" height="48px">`:weather.elementValue[0].value}</td>`);
+            }else if(key%4==3){
+              $("tbody .district_local").eq(x==0?-2:-1).append(`<td class="table-success text-success time4">${x==0?moment(weather.startTime).format('YYYY/MM/DD HH:mm')+`<img src="./img/day2.0/animated/${(moment(weather.startTime).format('H'))<15?'day':'night'}.svg" width="48px" height="48px">`:weather.elementValue[0].value}</td>`);
+            }
+          }
+        })
       }
     })
     let cities =[
